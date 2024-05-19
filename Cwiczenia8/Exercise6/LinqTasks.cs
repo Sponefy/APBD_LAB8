@@ -335,7 +335,7 @@ namespace Exercise6
         /// </summary>
         public static IEnumerable<Emp> Task12()
         {
-            IEnumerable<Emp> result = null;
+            IEnumerable<Emp> result = Emps.GetEmployees();
             return result;
         }
 
@@ -348,7 +348,9 @@ namespace Exercise6
         /// </summary>
         public static int Task13(int[] arr)
         {
-            int result = 0;
+            int result = arr.GroupBy(n => n)
+                .Single(g => g.Count() % 2 != 0)
+                .Key;
             //result=
             return result;
         }
@@ -359,7 +361,13 @@ namespace Exercise6
         /// </summary>
         public static IEnumerable<Dept> Task14()
         {
-            IEnumerable<Dept> result = null;
+            IEnumerable<Dept> result = Depts
+                .Where(d => 
+                {
+                    var count = Emps.Count(e => e.Deptno == d.Deptno);
+                    return count == 5 || count == 0;
+                })
+                .OrderBy(d => d.Dname);;
             //result =
             return result;
         }
@@ -368,5 +376,13 @@ namespace Exercise6
     public static class CustomExtensionMethods
     {
         //Put your extension methods here
+        public static IEnumerable<Emp> GetEmployees(this IEnumerable<Emp> emps)
+        {
+            var myQuerry = emps.Where(e => emps.Any(sub => sub.Mgr == e))
+                .OrderBy(e => e.Ename)
+                .ThenByDescending(e => e.Salary);
+
+            return myQuerry;
+        }
     }
 }
